@@ -120,7 +120,7 @@ namespace GammaFour.Data.Legacy
         public TParent GetParent(TChild child)
         {
             // Find the parent record.
-            return this.parentIndex.Find(this.keyFunction(child));
+            return this.filterFunction(child) ? this.parentIndex.Find(this.keyFunction(child)) : default;
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace GammaFour.Data.Legacy
         public bool HasParent(TChild child)
         {
             // Return the parent record.
-            return this.parentIndex.Find(this.keyFunction(child)) != null;
+            return !this.filterFunction(child) || this.parentIndex.Find(this.keyFunction(child)) != null;
         }
 
         /// <summary>
@@ -176,13 +176,13 @@ namespace GammaFour.Data.Legacy
         /// <param name="value">The new record.</param>
         public void Update(TChild value)
         {
-            // Get the previous version of this record.
+            // If the key to this index hasn't changed from the previous value, then there's nothing to do here.
             TChild previousValue = value.GetVersion(RecordVersion.Previous);
+            object previousKey = this.keyFunction(previousValue);
 
             // If the key to this index hasn't changed from the previous value, then there's nothing to do here.
             object currentKey = this.keyFunction(value);
-            object previousKey = this.keyFunction(previousValue);
-            if (!object.Equals(currentKey, previousKey))
+            if (!previousKey.Equals(currentKey))
             {
                 // Only remove the previous record from the index if it has a valid key referencing the parent table.
                 if (this.filterFunction(previousValue))
