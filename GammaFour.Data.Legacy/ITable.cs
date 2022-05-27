@@ -10,52 +10,62 @@ namespace GammaFour.Data.Legacy
     /// <summary>
     /// Used by a template selector to connect a view model to the template used to display it.
     /// </summary>
-    public interface ITable : IEnumerable<object>
+    public interface ITable : IEnumerable<IRow>
     {
+        /// <summary>
+        /// Gets the name of the index.
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// Gets the foreign indices.
+        /// </summary>
+        Dictionary<string, IForeignIndex> ForeignIndex { get; }
+
         /// <summary>
         /// Gets the unique indices.
         /// </summary>
         Dictionary<string, IUniqueIndex> UniqueIndex { get; }
 
         /// <summary>
-        /// Gets the set of records from the shared data model.
+        /// Gets the set of rows from the shared data model.
         /// </summary>
-        /// <returns>The set of records from the source.</returns>
-        Task<IEnumerable<object>> GetAsync();
+        /// <returns>The set of rows from the source.</returns>
+        Task<IEnumerable<IRow>> GetAsync();
 
         /// <summary>
         /// A method to merge a record into a set.
         /// </summary>
-        /// <param name="source">A set of records.</param>
-        /// <returns>The records that couldn't be merged.</returns>
-        IEnumerable<object> Merge(IEnumerable<object> source);
+        /// <param name="source">A set of rows.</param>
+        /// <returns>The rows that couldn't be merged.</returns>
+        IEnumerable<IRow> Merge(IEnumerable<IRow> source);
 
         /// <summary>
-        /// Patches a set of records in the shared data model.
+        /// Patches a set of rows in the shared data model.
         /// </summary>
-        /// <param name="records">A set of records.</param>
+        /// <param name="rows">A set of rows.</param>
         /// <returns>The set of accounts.</returns>
-        Task<IEnumerable<object>> PatchAsync(IEnumerable<object> records);
+        Task<IEnumerable<IRow>> PatchAsync(IEnumerable<IRow> rows);
 
         /// <summary>
-        /// Posts a set of records into the shared data model.
+        /// Posts a set of rows into the shared data model.
         /// </summary>
-        /// <param name="records">A set of records.</param>
+        /// <param name="rows">A set of rows.</param>
         /// <returns>The set of accounts.</returns>
-        Task<IEnumerable<object>> PostAsync(IEnumerable<object> records);
+        Task<IEnumerable<IRow>> PostAsync(IEnumerable<IRow> rows);
 
         /// <summary>
         /// A method to purge a record from a set.
         /// </summary>
-        /// <param name="source">A set of records.</param>
-        /// <returns>The records that couldn't be purged.</returns>
-        IEnumerable<object> Purge(IEnumerable<object> source);
+        /// <param name="source">A set of rows.</param>
+        /// <returns>The rows that couldn't be purged.</returns>
+        IEnumerable<IRow> Purge(IEnumerable<IRow> source);
 
         /// <summary>
-        /// Puts a set of records into the shared data model.
+        /// Puts a set of rows into the shared data model.
         /// </summary>
-        /// <param name="records">A set of records.</param>
+        /// <param name="rows">A set of rows.</param>
         /// <returns>The set of accounts.</returns>
-        Task<IEnumerable<object>> PutAsync(IEnumerable<object> records);
+        Task<IEnumerable<IRow>> PutAsync(IEnumerable<IRow> rows);
     }
 }

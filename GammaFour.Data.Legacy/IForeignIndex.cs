@@ -4,9 +4,7 @@
 // <author>Donald Roy Airey</author>
 namespace GammaFour.Data.Legacy
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq.Expressions;
 
     /// <summary>
     /// A foreign index.
@@ -19,56 +17,47 @@ namespace GammaFour.Data.Legacy
         string Name { get; }
 
         /// <summary>
-        /// Adds a key to the index.
+        /// Gets the unique index of the parent.
         /// </summary>
-        /// <param name="value">The referenced record.</param>
-        void Add(object value);
+        public IUniqueIndex UniqueIndex { get; }
 
         /// <summary>
-        /// Specifies the key for organizing the collection.
+        /// Adds a row to the index.
         /// </summary>
-        /// <param name="filter">Used to filter items that appear in the index.</param>
-        /// <returns>A reference to this object for Fluent construction.</returns>
-        IForeignIndex HasFilter(Expression<Func<object, bool>> filter);
+        /// <param name="row">The row.</param>
+        void Add(IRow row);
 
         /// <summary>
-        /// Finds the value indexed by the given key.
+        /// Gets the child records of the given parent row.
         /// </summary>
-        /// <param name="parent">The parent record.</param>
-        /// <returns>The record indexed by the given key, or null if it doesn't exist.</returns>
-        IEnumerable<object> GetChildren(object parent);
+        /// <param name="parent">The parent row.</param>
+        /// <returns>The rows that are related to the parent row.</returns>
+        IEnumerable<IRow> GetChildren(IRow parent);
 
         /// <summary>
-        /// Gets the parent recordd of the given child.
+        /// Gets the parent row of the given child row.
         /// </summary>
-        /// <param name="child">The child record.</param>
-        /// <returns>The parent record of the given child.</returns>
-        object GetParent(object child);
+        /// <param name="child">The child row.</param>
+        /// <returns>The parent row of the given child.</returns>
+        IRow GetParent(IRow child);
 
         /// <summary>
-        /// Specifies the key for organizing the collection.
+        /// Gets an indication of whether the child row has a parent.
         /// </summary>
-        /// <param name="key">Used to extract the key from the record.</param>
-        /// <returns>A reference to this object for Fluent construction.</returns>
-        IForeignIndex HasIndex(Expression<Func<object, object>> key);
-
-        /// <summary>
-        /// Gets an indication of whether the child record has a parent.
-        /// </summary>
-        /// <param name="child">The child record.</param>
-        /// <returns>The parent record of the given child.</returns>
-        bool HasParent(object child);
+        /// <param name="child">The child row.</param>
+        /// <returns>The parent row of the given child.</returns>
+        bool HasParent(IRow child);
 
         /// <summary>
         /// Removes a key from the index.
         /// </summary>
-        /// <param name="value">The the value.</param>
-        void Remove(object value);
+        /// <param name="row">The the row.</param>
+        void Remove(IRow row);
 
         /// <summary>
-        /// Changes a key value.
+        /// Changes a key row.
         /// </summary>
-        /// <param name="value">The new record.</param>
-        void Update(object value);
+        /// <param name="row">The new row.</param>
+        void Update(IRow row);
     }
 }

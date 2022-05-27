@@ -10,12 +10,12 @@ namespace GammaFour.Data.Legacy
     /// <summary>
     /// A unique index.
     /// </summary>
-    /// <typeparam name="T">The type of object managed by the index.</typeparam>
+    /// <typeparam name="T">The type of IRow managed by the index.</typeparam>
     public class UniqueIndex<T> : UniqueIndex
-        where T : class
+        where T : class, IRow
     {
         /// <summary>
-        /// Gets or sets a filter for items that appear in the index.
+        /// Gets or sets a function used to filter items that should not appear in the index.
         /// </summary>
         private Func<T, bool> filterFunction = t => true;
 
@@ -34,27 +34,27 @@ namespace GammaFour.Data.Legacy
         }
 
         /// <summary>
-        /// Finds the value indexed by the given key.
+        /// Finds the row indexed by the given key.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns>The record indexed by the given key, or null if it doesn't exist.</returns>
         public new T Find(object key)
         {
-            // Return the value from the dictionary, or null if it doesn't exist.
+            // Return the row from the dictionary, or null if it doesn't exist.
             return base.Find(key) as T;
         }
 
         /// <inheritdoc/>
-        public override object GetKey(object value)
+        public override object GetKey(IRow row)
         {
-            return this.keyFunction(value as T);
+            return this.keyFunction(row as T);
         }
 
         /// <summary>
         /// Specifies the key for organizing the collection.
         /// </summary>
         /// <param name="filter">Used to filter items that appear in the index.</param>
-        /// <returns>A reference to this object for Fluent construction.</returns>
+        /// <returns>A reference to this IRow for Fluent construction.</returns>
         public UniqueIndex<T> HasFilter(Expression<Func<T, bool>> filter)
         {
             this.filterFunction = filter.Compile();
@@ -65,7 +65,7 @@ namespace GammaFour.Data.Legacy
         /// Specifies the key for organizing the collection.
         /// </summary>
         /// <param name="key">Used to extract the key from the record.</param>
-        /// <returns>A reference to this object for Fluent construction.</returns>
+        /// <returns>A reference to this IRow for Fluent construction.</returns>
         public UniqueIndex<T> HasIndex(Expression<Func<T, object>> key)
         {
             this.keyFunction = key.Compile();
@@ -73,10 +73,10 @@ namespace GammaFour.Data.Legacy
         }
 
         /// <inheritdoc/>
-        protected override bool Filter(object value)
+        protected override bool Filter(IRow row)
         {
             // This will typically be a test for null.
-            return this.filterFunction(value as T);
+            return this.filterFunction(row as T);
         }
     }
 }

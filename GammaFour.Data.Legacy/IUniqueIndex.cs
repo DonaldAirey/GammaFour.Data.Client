@@ -5,7 +5,6 @@
 namespace GammaFour.Data.Legacy
 {
     using System;
-    using System.Linq.Expressions;
 
     /// <summary>
     /// An interface for a unique index.
@@ -15,7 +14,7 @@ namespace GammaFour.Data.Legacy
         /// <summary>
         /// Gets or sets the handler for when the index is changed.
         /// </summary>
-        EventHandler<RecordChangeEventArgs<object>> IndexChangedHandler { get; set; }
+        EventHandler<RecordChangeEventArgs<IRow>> IndexChangedHandler { get; set; }
 
         /// <summary>
         /// Gets the name of the index.
@@ -23,42 +22,47 @@ namespace GammaFour.Data.Legacy
         string Name { get; }
 
         /// <summary>
-        /// Adds a key to the index.
+        /// Gets or sets the table to which this index belongs.
         /// </summary>
-        /// <param name="value">The referenced record.</param>
-        void Add(object value);
+        ITable Table { get; set; }
 
         /// <summary>
-        /// Gets a value that indicates if the index contains the given key.
+        /// Adds a key to the index.
+        /// </summary>
+        /// <param name="row">The referenced record.</param>
+        void Add(IRow row);
+
+        /// <summary>
+        /// Gets an indication whether the index contains the given key.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns>True if the index contains the given key, false otherwise.</returns>
         bool ContainsKey(object key);
 
         /// <summary>
-        /// Finds the value indexed by the given key.
+        /// Finds the row indexed by the given key.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns>The record indexed by the given key, or null if it doesn't exist.</returns>
-        object Find(object key);
+        IRow Find(object key);
 
         /// <summary>
         /// Gets the key of the given record.
         /// </summary>
-        /// <param name="value">The record.</param>
-        /// <returns>The key values.</returns>
-        object GetKey(object value);
+        /// <param name="row">The record.</param>
+        /// <returns>The key rows.</returns>
+        object GetKey(IRow row);
 
         /// <summary>
         /// Removes a key from the index.
         /// </summary>
-        /// <param name="value">The record to be removed.</param>
-        void Remove(object value);
+        /// <param name="row">The record to be removed.</param>
+        void Remove(IRow row);
 
         /// <summary>
         /// Updates the key of a record in the index.
         /// </summary>
-        /// <param name="value">The record that has changed.</param>
-        void Update(object value);
+        /// <param name="row">The record that has changed.</param>
+        void Update(IRow row);
     }
 }

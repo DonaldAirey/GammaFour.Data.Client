@@ -14,6 +14,6 @@ namespace GammaFour.Data.Legacy
         /// </summary>
         /// <param name="recordVersion">The record version (original, previous, current).</param>
         /// <returns>A clone of the requested version of the record.</returns>
-        object GetVersion(RecordVersion recordVersion);
+        IRow GetVersion(RecordVersion recordVersion);
     }
 }

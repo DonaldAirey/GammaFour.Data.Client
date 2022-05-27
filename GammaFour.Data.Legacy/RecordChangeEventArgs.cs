@@ -11,6 +11,7 @@ namespace GammaFour.Data.Legacy
     /// </summary>
     /// <typeparam name="T">The key type.</typeparam>
     public class RecordChangeEventArgs<T> : EventArgs
+        where T : IRow
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RecordChangeEventArgs{TType}"/> class.

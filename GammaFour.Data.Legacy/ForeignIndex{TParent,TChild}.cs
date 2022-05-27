@@ -43,7 +43,7 @@ namespace GammaFour.Data.Legacy
         /// </summary>
         /// <param name="parent">The parent record.</param>
         /// <returns>The record indexed by the given key, or null if it doesn't exist.</returns>
-        public new IEnumerable<TChild> GetChildren(object parent)
+        public new IEnumerable<TChild> GetChildren(IRow parent)
         {
             // Return the list of children for the given parent record, or an empty list if there are no children.
             return base.GetChildren(parent) as IEnumerable<TChild>;
@@ -54,7 +54,7 @@ namespace GammaFour.Data.Legacy
         /// </summary>
         /// <param name="child">The child record.</param>
         /// <returns>The parent record of the given child.</returns>
-        public new TParent GetParent(object child)
+        public new TParent GetParent(IRow child)
         {
             // Find the parent record.
             return base.GetParent(child) as TParent;
@@ -67,7 +67,7 @@ namespace GammaFour.Data.Legacy
         /// <returns>A reference to this object for Fluent construction.</returns>
         public ForeignIndex<TParent, TChild> HasIndex(Expression<Func<TChild, object>> key)
         {
-            this.KeyFunction = key.Compile() as Func<object, object>;
+            this.KeyFunction = key.Compile() as Func<IRow, object>;
             return this;
         }
     }
