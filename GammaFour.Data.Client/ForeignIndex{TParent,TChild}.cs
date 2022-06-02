@@ -6,6 +6,7 @@ namespace GammaFour.Data.Client
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
 
     /// <summary>
@@ -52,7 +53,7 @@ namespace GammaFour.Data.Client
         public new IEnumerable<TChild> GetChildren(IRow parent)
         {
             // Return the list of children for the given parent record, or an empty list if there are no children.
-            return base.GetChildren(parent) as IEnumerable<TChild>;
+            return base.GetChildren(parent).Cast<TChild>();
         }
 
         /// <inheritdoc/>
