@@ -2,7 +2,7 @@
 //    Copyright © 2022 - Donald Roy Airey.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.Data.Legacy
+namespace GammaFour.Data.Client
 {
     using System;
     using System.Linq.Expressions;
@@ -31,6 +31,13 @@ namespace GammaFour.Data.Legacy
         public UniqueIndex(string name)
             : base(name)
         {
+        }
+
+        /// <inheritdoc/>
+        public override bool Filter(IRow row)
+        {
+            // This will typically be a test for null.
+            return this.filterFunction(row as T);
         }
 
         /// <summary>
@@ -70,13 +77,6 @@ namespace GammaFour.Data.Legacy
         {
             this.keyFunction = key.Compile();
             return this;
-        }
-
-        /// <inheritdoc/>
-        protected override bool Filter(IRow row)
-        {
-            // This will typically be a test for null.
-            return this.filterFunction(row as T);
         }
     }
 }

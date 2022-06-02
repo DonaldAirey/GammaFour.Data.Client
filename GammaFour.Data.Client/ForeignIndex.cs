@@ -2,7 +2,7 @@
 //    Copyright © 2022 - Donald Roy Airey.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.Data.Legacy
+namespace GammaFour.Data.Client
 {
     using System;
     using System.Collections.Generic;
@@ -17,6 +17,16 @@ namespace GammaFour.Data.Legacy
         /// The dictionary containing the index.
         /// </summary>
         private readonly Dictionary<object, HashSet<IRow>> dictionary = new Dictionary<object, HashSet<IRow>>();
+
+        /// <summary>
+        /// Gets or sets a function to filter items that appear in the index.
+        /// </summary>
+        private Func<IRow, bool> filterFunction = t => true;
+
+        /// <summary>
+        /// Gets or sets a function used to get the key from the child record.
+        /// </summary>
+        private Func<IRow, object> keyFunction = t => throw new NotImplementedException();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ForeignIndex"/> class.
@@ -40,26 +50,16 @@ namespace GammaFour.Data.Legacy
         public IUniqueIndex UniqueIndex { get; }
 
         /// <summary>
-        /// Gets or sets a function to filter items that appear in the index.
-        /// </summary>
-        protected Func<IRow, bool> FilterFunction { get; set; } = t => true;
-
-        /// <summary>
-        /// Gets or sets a function used to get the key from the child record.
-        /// </summary>
-        protected Func<IRow, object> KeyFunction { get; set; } = t => throw new NotImplementedException();
-
-        /// <summary>
         /// Adds a key to the index.
         /// </summary>
         /// <param name="row">The referenced record.</param>
         public void Add(IRow row)
         {
             // For those values that qualify as keys, extract the key from the record and add it to the dictionary making sure we can undo the action.
-            if (this.FilterFunction(row))
+            if (this.Filter(row))
             {
                 // Don't attempt to add a record with a null key.
-                object key = this.KeyFunction(row);
+                object key = this.GetKey(row);
 
                 // Make sure the new key exist in the parent.
                 if (!this.UniqueIndex.ContainsKey(key))
@@ -82,6 +82,13 @@ namespace GammaFour.Data.Legacy
             }
         }
 
+        /// <inheritdoc/>
+        public virtual bool Filter(IRow row)
+        {
+            // This will typically be a test for null.
+            return this.filterFunction(row);
+        }
+
         /// <summary>
         /// Finds the row indexed by the given key.
         /// </summary>
@@ -93,6 +100,12 @@ namespace GammaFour.Data.Legacy
             return this.dictionary.TryGetValue(this.UniqueIndex.GetKey(parent), out HashSet<IRow> rows) ? rows : (IEnumerable<IRow>)new List<IRow>();
         }
 
+        /// <inheritdoc/>
+        public virtual object GetKey(IRow row)
+        {
+            return this.keyFunction(row);
+        }
+
         /// <summary>
         /// Gets the parent recordd of the given child.
         /// </summary>
@@ -101,7 +114,7 @@ namespace GammaFour.Data.Legacy
         public IRow GetParent(IRow child)
         {
             // Find the parent record.
-            return this.FilterFunction(child) ? this.UniqueIndex.Find(this.KeyFunction(child)) : default;
+            return this.Filter(child) ? this.UniqueIndex.Find(this.GetKey(child)) : default;
         }
 
         /// <summary>
@@ -111,7 +124,7 @@ namespace GammaFour.Data.Legacy
         /// <returns>A reference to this object for Fluent construction.</returns>
         public IForeignIndex HasFilter(Expression<Func<IRow, bool>> filter)
         {
-            this.FilterFunction = filter.Compile();
+            this.filterFunction = filter.Compile();
             return this;
         }
 
@@ -122,7 +135,7 @@ namespace GammaFour.Data.Legacy
         /// <returns>A reference to this object for Fluent construction.</returns>
         public IForeignIndex HasIndex(Expression<Func<IRow, object>> key)
         {
-            this.KeyFunction = key.Compile();
+            this.keyFunction = key.Compile();
             return this;
         }
 
@@ -134,7 +147,7 @@ namespace GammaFour.Data.Legacy
         public bool HasParent(IRow child)
         {
             // Return the parent record.
-            return !this.FilterFunction(child) || this.UniqueIndex.Find(this.KeyFunction(child)) != null;
+            return !this.Filter(child) || this.UniqueIndex.Find(this.GetKey(child)) != null;
         }
 
         /// <summary>
@@ -144,10 +157,10 @@ namespace GammaFour.Data.Legacy
         public void Remove(IRow row)
         {
             // Only attempt to remove a child if the child has a valid key referencing the parent.
-            if (this.FilterFunction(row))
+            if (this.Filter(row))
             {
                 // Get the current property from the child that references a unique key on the parent.
-                object key = this.KeyFunction(row);
+                object key = this.GetKey(row);
 
                 // Find the set of child records belonging to the given parent that has the key extracted from the child.
                 if (this.dictionary.TryGetValue(key, out HashSet<IRow> hashSet))
@@ -169,57 +182,53 @@ namespace GammaFour.Data.Legacy
         public void Update(IRow row)
         {
             // If the key to this index hasn't changed from the previous row, then there's nothing to do here.
-            IVersionable childVersion = row as IVersionable;
-            if (childVersion != null)
+            IRow previousRow = row.GetVersion(RecordVersion.Previous);
+            object previousKey = this.GetKey(previousRow);
+
+            // If the key to this index hasn't changed from the previous row, then there's nothing to do here.
+            object currentKey = this.GetKey(row);
+            if (!object.Equals(currentKey, previousKey))
             {
-                IRow previousRow = childVersion.GetVersion(RecordVersion.Previous);
-                object previousKey = this.KeyFunction(previousRow);
-
-                // If the key to this index hasn't changed from the previous row, then there's nothing to do here.
-                object currentKey = this.KeyFunction(row);
-                if (!previousKey.Equals(currentKey))
+                // Only remove the previous record from the index if it has a valid key referencing the parent table.
+                if (this.Filter(previousRow))
                 {
-                    // Only remove the previous record from the index if it has a valid key referencing the parent table.
-                    if (this.FilterFunction(previousRow))
+                    // Make sure the previous exist in the index before removing the child.
+                    if (!this.dictionary.TryGetValue(previousKey, out var hashSet))
                     {
-                        // Make sure the previous exist in the index before removing the child.
-                        if (!this.dictionary.TryGetValue(previousKey, out var hashSet))
-                        {
-                            throw new KeyNotFoundException($"{this.Name}: {previousKey}");
-                        }
-
-                        // Remove the existing child record from the hash and remove the hash from the dictionary if it's empty.
-                        hashSet.Remove(row);
-                        if (hashSet.Count == 0)
-                        {
-                            this.dictionary.Remove(previousKey);
-                        }
+                        throw new KeyNotFoundException($"{this.Name}: {previousKey}");
                     }
 
-                    // Only add the current record to the index if it has a valid key referencing the parent table.
-                    if (this.FilterFunction(row))
+                    // Remove the existing child record from the hash and remove the hash from the dictionary if it's empty.
+                    hashSet.Remove(row);
+                    if (hashSet.Count == 0)
                     {
-                        // Don't attempt to add a record with a null key.
-                        object newKey = this.KeyFunction(row);
+                        this.dictionary.Remove(previousKey);
+                    }
+                }
 
-                        // Make sure the new key exist in the parent.
-                        if (!this.UniqueIndex.ContainsKey(newKey))
-                        {
-                            throw new KeyNotFoundException($"{this.Name}: {newKey}");
-                        }
+                // Only add the current record to the index if it has a valid key referencing the parent table.
+                if (this.Filter(row))
+                {
+                    // Don't attempt to add a record with a null key.
+                    object newKey = this.GetKey(row);
 
-                        // Find or create a bucket of child records for the new newKey.
-                        if (!this.dictionary.TryGetValue(newKey, out var hashSet))
-                        {
-                            hashSet = new HashSet<IRow>();
-                            this.dictionary.Add(newKey, hashSet);
-                        }
+                    // Make sure the new key exist in the parent.
+                    if (!this.UniqueIndex.ContainsKey(newKey))
+                    {
+                        throw new KeyNotFoundException($"{this.Name}: {newKey}");
+                    }
 
-                        // Add the newKey to the index and make sure it's unique.
-                        if (!hashSet.Add(row))
-                        {
-                            throw new DuplicateKeyException($"{this.Name}: {newKey}");
-                        }
+                    // Find or create a bucket of child records for the new newKey.
+                    if (!this.dictionary.TryGetValue(newKey, out var hashSet))
+                    {
+                        hashSet = new HashSet<IRow>();
+                        this.dictionary.Add(newKey, hashSet);
+                    }
+
+                    // Add the newKey to the index and make sure it's unique.
+                    if (!hashSet.Add(row))
+                    {
+                        throw new DuplicateKeyException($"{this.Name}: {newKey}");
                     }
                 }
             }

@@ -2,7 +2,7 @@
 //    Copyright © 2022 - Donald Roy Airey.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.Data.Legacy
+namespace GammaFour.Data.Client
 {
     using System;
 

@@ -2,7 +2,7 @@
 //    Copyright © 2022 - Donald Roy Airey.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.Data.Legacy
+namespace GammaFour.Data.Client
 {
     using System;
     using System.Collections.Generic;
@@ -73,6 +73,13 @@ namespace GammaFour.Data.Legacy
         }
 
         /// <inheritdoc/>
+        public virtual bool Filter(IRow row)
+        {
+            // This will typically be a test for null.
+            return this.filterFunction(row);
+        }
+
+        /// <inheritdoc/>
         public IRow Find(object key)
         {
             // Return the row from the dictionary, or null if it doesn't exist.
@@ -126,44 +133,29 @@ namespace GammaFour.Data.Legacy
         public void Update(IRow row)
         {
             // Get the previous version of this record.
-            IVersionable versionable = row as IVersionable;
-            if (versionable != null)
+            IRow previousRow = row.GetVersion(RecordVersion.Previous);
+            object previousKey = this.GetKey(previousRow);
+            object currentKey = this.GetKey(row);
+
+            // Update should only perform work when the rows are different.
+            if (!object.Equals(previousKey, currentKey))
             {
-                IRow previousRow = versionable.GetVersion(RecordVersion.Previous);
-                object previousKey = this.GetKey(previousRow);
-                object currentKey = this.GetKey(row);
-
-                // Update should only perform work when the rows are different.
-                if (!object.Equals(previousKey, currentKey))
+                // Make sure the key was properly removed before we push an undo operation on the stack.  Removing an item that isn't part of the
+                // index is not considered an exception.
+                if (this.Filter(previousRow))
                 {
-                    // Make sure the key was properly removed before we push an undo operation on the stack.  Removing an item that isn't part of the
-                    // index is not considered an exception.
-                    if (this.Filter(previousRow))
-                    {
-                        this.dictionary.Remove(previousKey);
-                    }
-
-                    // Extract the new key from the row and add it to the dictionary making sure we can undo the action.
-                    if (this.Filter(row))
-                    {
-                        this.dictionary.Add(currentKey, row);
-                    }
-
-                    // Notify when the index has changed.
-                    this.OnIndexChanging(DataAction.Update, previousRow, row);
+                    this.dictionary.Remove(previousKey);
                 }
-            }
-        }
 
-        /// <summary>
-        /// Determines if the row should be filtered from the index.
-        /// </summary>
-        /// <param name="row">the row.</param>
-        /// <returns>true if the row can be indexed, false if not.</returns>
-        protected virtual bool Filter(IRow row)
-        {
-            // This will typically be a test for null.
-            return this.filterFunction(row);
+                // Extract the new key from the row and add it to the dictionary making sure we can undo the action.
+                if (this.Filter(row))
+                {
+                    this.dictionary.Add(currentKey, row);
+                }
+
+                // Notify when the index has changed.
+                this.OnIndexChanging(DataAction.Update, previousRow, row);
+            }
         }
 
         /// <summary>

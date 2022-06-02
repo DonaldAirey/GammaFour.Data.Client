@@ -2,15 +2,16 @@
 //    Copyright © 2022 - Donald Roy Airey.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.Data.Legacy
+namespace GammaFour.Data.Client
 {
+    using System.Collections;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
     /// <summary>
     /// Used by a template selector to connect a view model to the template used to display it.
     /// </summary>
-    public interface ITable : IEnumerable<IRow>
+    public interface ITable : IEnumerable
     {
         /// <summary>
         /// Gets the name of the index.
@@ -26,6 +27,13 @@ namespace GammaFour.Data.Legacy
         /// Gets the unique indices.
         /// </summary>
         Dictionary<string, IUniqueIndex> UniqueIndex { get; }
+
+        /// <summary>
+        /// Deserializes JSON data.
+        /// </summary>
+        /// <param name="source">The source text.</param>
+        /// <returns>A set of rows from deserialized from the stream.</returns>
+        IEnumerable<IRow> Deserialize(string source);
 
         /// <summary>
         /// Gets the set of rows from the shared data model.

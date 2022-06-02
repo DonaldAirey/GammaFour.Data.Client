@@ -2,7 +2,7 @@
 //    Copyright © 2022 - Donald Roy Airey.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.Data.Legacy
+namespace GammaFour.Data.Client
 {
     using System.Collections.Generic;
 
@@ -28,11 +28,25 @@ namespace GammaFour.Data.Legacy
         void Add(IRow row);
 
         /// <summary>
+        /// Determines if a given row belongs in the index.
+        /// </summary>
+        /// <param name="row">the row to be evaluated.</param>
+        /// <returns>true if the row belongs in the index, false if not.</returns>
+        bool Filter(IRow row);
+
+        /// <summary>
         /// Gets the child records of the given parent row.
         /// </summary>
         /// <param name="parent">The parent row.</param>
         /// <returns>The rows that are related to the parent row.</returns>
         IEnumerable<IRow> GetChildren(IRow parent);
+
+        /// <summary>
+        /// Gets the key of the given record.
+        /// </summary>
+        /// <param name="row">The record.</param>
+        /// <returns>The key rows.</returns>
+        object GetKey(IRow row);
 
         /// <summary>
         /// Gets the parent row of the given child row.

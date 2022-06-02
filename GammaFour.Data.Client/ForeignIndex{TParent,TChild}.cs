@@ -2,7 +2,7 @@
 //    Copyright © 2022 - Donald Roy Airey.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.Data.Legacy
+namespace GammaFour.Data.Client
 {
     using System;
     using System.Collections.Generic;
@@ -18,6 +18,16 @@ namespace GammaFour.Data.Legacy
         where TChild : class
     {
         /// <summary>
+        /// Gets or sets a function to filter items that appear in the index.
+        /// </summary>
+        private Func<TChild, bool> filterFunction = t => true;
+
+        /// <summary>
+        /// Gets or sets a function used to get the key from the child record.
+        /// </summary>
+        private Func<TChild, object> keyFunction = t => throw new NotImplementedException();
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ForeignIndex{TParent, TChild}"/> class.
         /// </summary>
         /// <param name="name">The name of the index.</param>
@@ -27,15 +37,11 @@ namespace GammaFour.Data.Legacy
         {
         }
 
-        /// <summary>
-        /// Specifies the key for organizing the collection.
-        /// </summary>
-        /// <param name="filter">Used to filter items that appear in the index.</param>
-        /// <returns>A reference to this object for Fluent construction.</returns>
-        public ForeignIndex<TParent, TChild> HasFilter(Expression<Func<TChild, bool>> filter)
+        /// <inheritdoc/>
+        public override bool Filter(IRow row)
         {
-            this.FilterFunction = filter.Compile() as Func<object, bool>;
-            return this;
+            // This will typically be a test for null.
+            return this.filterFunction(row as TChild);
         }
 
         /// <summary>
@@ -47,6 +53,13 @@ namespace GammaFour.Data.Legacy
         {
             // Return the list of children for the given parent record, or an empty list if there are no children.
             return base.GetChildren(parent) as IEnumerable<TChild>;
+        }
+
+        /// <inheritdoc/>
+        public override object GetKey(IRow row)
+        {
+            // Extract the key from the row.
+            return this.keyFunction(row as TChild);
         }
 
         /// <summary>
@@ -63,11 +76,22 @@ namespace GammaFour.Data.Legacy
         /// <summary>
         /// Specifies the key for organizing the collection.
         /// </summary>
+        /// <param name="filter">Used to filter items that appear in the index.</param>
+        /// <returns>A reference to this object for Fluent construction.</returns>
+        public ForeignIndex<TParent, TChild> HasFilter(Expression<Func<TChild, bool>> filter)
+        {
+            this.filterFunction = filter.Compile();
+            return this;
+        }
+
+        /// <summary>
+        /// Specifies the key for organizing the collection.
+        /// </summary>
         /// <param name="key">Used to extract the key from the record.</param>
         /// <returns>A reference to this object for Fluent construction.</returns>
         public ForeignIndex<TParent, TChild> HasIndex(Expression<Func<TChild, object>> key)
         {
-            this.KeyFunction = key.Compile() as Func<IRow, object>;
+            this.keyFunction = key.Compile();
             return this;
         }
     }

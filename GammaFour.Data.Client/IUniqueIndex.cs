@@ -2,7 +2,7 @@
 //    Copyright © 2022 - Donald Roy Airey.  All Rights Reserved.
 // </copyright>
 // <author>Donald Roy Airey</author>
-namespace GammaFour.Data.Legacy
+namespace GammaFour.Data.Client
 {
     using System;
 
@@ -38,6 +38,13 @@ namespace GammaFour.Data.Legacy
         /// <param name="key">The key.</param>
         /// <returns>True if the index contains the given key, false otherwise.</returns>
         bool ContainsKey(object key);
+
+        /// <summary>
+        /// Determines if a given row belongs in the index.
+        /// </summary>
+        /// <param name="row">the row to be evaluated.</param>
+        /// <returns>true if the row belongs in the index, false if not.</returns>
+        bool Filter(IRow row);
 
         /// <summary>
         /// Finds the row indexed by the given key.
