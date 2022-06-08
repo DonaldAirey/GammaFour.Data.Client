@@ -19,7 +19,7 @@ namespace GammaFour.Data.Client
         /// <summary>
         /// Gets the unique index of the parent.
         /// </summary>
-        public IUniqueIndex UniqueIndex { get; }
+        IUniqueIndex UniqueIndex { get; }
 
         /// <summary>
         /// Adds a row to the index.

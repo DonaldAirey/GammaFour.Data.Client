@@ -14,7 +14,7 @@ namespace GammaFour.Data.Client
     public interface ITable : IEnumerable
     {
         /// <summary>
-        /// Gets the name of the index.
+        /// Gets the name of the table.
         /// </summary>
         string Name { get; }
 
@@ -42,38 +42,37 @@ namespace GammaFour.Data.Client
         Task<IEnumerable<IRow>> GetAsync();
 
         /// <summary>
-        /// A method to merge a record into a set.
+        /// A method to merge a row into a set.
         /// </summary>
         /// <param name="source">A set of rows.</param>
-        /// <returns>The rows that couldn't be merged.</returns>
-        IEnumerable<IRow> Merge(IEnumerable<IRow> source);
+        void Merge(IEnumerable<IRow> source);
 
         /// <summary>
         /// Patches a set of rows in the shared data model.
         /// </summary>
-        /// <param name="rows">A set of rows.</param>
-        /// <returns>The set of accounts.</returns>
+        /// <param name="rows">A set of rows to be patched.</param>
+        /// <returns>The realized rows.</returns>
         Task<IEnumerable<IRow>> PatchAsync(IEnumerable<IRow> rows);
 
         /// <summary>
-        /// Posts a set of rows into the shared data model.
+        /// Posts a row into the shared data model.
         /// </summary>
-        /// <param name="rows">A set of rows.</param>
-        /// <returns>The set of accounts.</returns>
-        Task<IEnumerable<IRow>> PostAsync(IEnumerable<IRow> rows);
+        /// <param name="row">The row to be POSTed.</param>
+        /// <returns>The realized row.</returns>
+        Task<IRow> PostAsync(IRow row);
 
         /// <summary>
-        /// A method to purge a record from a set.
+        /// A method to purge a row from a set.
         /// </summary>
-        /// <param name="source">A set of rows.</param>
+        /// <param name="source">The rows to be purged.</param>
         /// <returns>The rows that couldn't be purged.</returns>
         IEnumerable<IRow> Purge(IEnumerable<IRow> source);
 
         /// <summary>
-        /// Puts a set of rows into the shared data model.
+        /// Puts a row into the shared data model.
         /// </summary>
-        /// <param name="rows">A set of rows.</param>
-        /// <returns>The set of accounts.</returns>
-        Task<IEnumerable<IRow>> PutAsync(IEnumerable<IRow> rows);
+        /// <param name="row">A row to be PUT.</param>
+        /// <returns>The realized row.</returns>
+        Task<IRow> PutAsync(IRow row);
     }
 }
