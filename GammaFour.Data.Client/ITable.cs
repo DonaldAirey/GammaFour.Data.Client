@@ -65,8 +65,7 @@ namespace GammaFour.Data.Client
         /// A method to purge a row from a set.
         /// </summary>
         /// <param name="source">The rows to be purged.</param>
-        /// <returns>The rows that couldn't be purged.</returns>
-        IEnumerable<IRow> Purge(IEnumerable<IRow> source);
+        void Purge(IEnumerable<IRow> source);
 
         /// <summary>
         /// Puts a row into the shared data model.
