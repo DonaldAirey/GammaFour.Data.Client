@@ -14,17 +14,17 @@ namespace GammaFour.Data.Client
         /// <summary>
         /// Gets or sets the handler for when the index is changed.
         /// </summary>
-        EventHandler<RecordChangeEventArgs<IRow>> IndexChangedHandler { get; set; }
+        EventHandler<RecordChangeEventArgs<IRow>>? IndexChangedHandler { get; set; }
 
         /// <summary>
         /// Gets the name of the index.
         /// </summary>
-        string Name { get; }
+        string? Name { get; }
 
         /// <summary>
         /// Gets or sets the table to which this index belongs.
         /// </summary>
-        ITable Table { get; set; }
+        ITable? Table { get; set; }
 
         /// <summary>
         /// Adds a key to the index.
@@ -51,7 +51,7 @@ namespace GammaFour.Data.Client
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns>The record indexed by the given key, or null if it doesn't exist.</returns>
-        IRow Find(object key);
+        IRow? Find(object key);
 
         /// <summary>
         /// Gets the key of the given record.

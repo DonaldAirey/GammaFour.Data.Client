@@ -56,11 +56,11 @@ namespace GammaFour.Data.Client
         /// <summary>
         /// Gets the index where the exception occurred.
         /// </summary>
-        public string Index { get; }
+        public string? Index { get; } = null;
 
         /// <summary>
         /// Gets the key that caused the exception.
         /// </summary>
-        public object Key { get; }
+        public object? Key { get; } = null;
     }
 }

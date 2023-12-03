@@ -37,7 +37,7 @@ namespace GammaFour.Data.Client
         public override bool Filter(IRow row)
         {
             // This will typically be a test for null.
-            return this.filterFunction(row as T);
+            return row is T typedRow && this.filterFunction(typedRow);
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace GammaFour.Data.Client
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns>The record indexed by the given key, or null if it doesn't exist.</returns>
-        public new T Find(object key)
+        public new T? Find(object key)
         {
             // Return the row from the dictionary, or null if it doesn't exist.
             return base.Find(key) as T;
@@ -54,7 +54,7 @@ namespace GammaFour.Data.Client
         /// <inheritdoc/>
         public override object GetKey(IRow row)
         {
-            return this.keyFunction(row as T);
+            return row is T typedRow ? this.keyFunction(typedRow) : false;
         }
 
         /// <summary>

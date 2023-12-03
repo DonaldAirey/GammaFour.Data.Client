@@ -68,7 +68,7 @@ namespace GammaFour.Data.Client
                 }
 
                 // Find or create a bucket of child records for the new key.
-                if (!this.dictionary.TryGetValue(key, out HashSet<IRow> hashSet))
+                if (!this.dictionary.TryGetValue(key, out HashSet<IRow>? hashSet))
                 {
                     hashSet = new HashSet<IRow>();
                     this.dictionary.Add(key, hashSet);
@@ -97,7 +97,7 @@ namespace GammaFour.Data.Client
         public IEnumerable<IRow> GetChildren(IRow parent)
         {
             // Return the list of children for the given parent record, or an empty list if there are no children.
-            return this.dictionary.TryGetValue(this.UniqueIndex.GetKey(parent), out HashSet<IRow> rows) ? rows : (IEnumerable<IRow>)new List<IRow>();
+            return this.dictionary.TryGetValue(this.UniqueIndex.GetKey(parent), out HashSet<IRow>? rows) ? rows : (IEnumerable<IRow>)new List<IRow>();
         }
 
         /// <inheritdoc/>
@@ -111,10 +111,10 @@ namespace GammaFour.Data.Client
         /// </summary>
         /// <param name="child">The child record.</param>
         /// <returns>The parent record of the given child.</returns>
-        public IRow GetParent(IRow child)
+        public IRow? GetParent(IRow child)
         {
             // Find the parent record.
-            return this.Filter(child) ? this.UniqueIndex.Find(this.GetKey(child)) : default;
+            return this.Filter(child) ? (this.UniqueIndex.Find(this.GetKey(child)) ?? default) : default;
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace GammaFour.Data.Client
                 object key = this.GetKey(row);
 
                 // Find the set of child records belonging to the given parent that has the key extracted from the child.
-                if (this.dictionary.TryGetValue(key, out HashSet<IRow> hashSet))
+                if (this.dictionary.TryGetValue(key, out HashSet<IRow>? hashSet))
                 {
                     // Remove the existing child record from the hash and remove the hash if it's empty.
                     hashSet.Remove(row);
@@ -239,7 +239,7 @@ namespace GammaFour.Data.Client
         /// </summary>
         /// <param name="sender">The originator of the event.</param>
         /// <param name="recordChangeEventArgs">The event arguments.</param>
-        private void HandleUniqueIndexChange(object sender, RecordChangeEventArgs<IRow> recordChangeEventArgs)
+        private void HandleUniqueIndexChange(object? sender, RecordChangeEventArgs<IRow> recordChangeEventArgs)
         {
             // When deleting a parent record, or updating a parent record, enforce the constraint that the child records cannot be orphaned.
             if ((recordChangeEventArgs.DataAction == DataAction.Delete || recordChangeEventArgs.DataAction == DataAction.Update)

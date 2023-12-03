@@ -1,17 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <PackageVersion>3.2.2</PackageVersion>
+    <Configurations>Development;Production</Configurations>
+    <Copyright>Copyright (C) 2023 - Donald Airey - All rights reserved.</Copyright>
     <Description>Support package for Gamma Four Data Model Generator output.</Description>
-    <Copyright>Copyright (C) 2022 - Donald Airey - All rights reserved.</Copyright>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <Nullable>enable</Nullable>
+    <PackageIcon>Gamma Four.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageOutputPath>C:\NuGet Packages</PackageOutputPath>
     <PackageProjectUrl>https://github.com/DonaldAirey/GammaFour.Data.Client</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageVersion>4.0.0</PackageVersion>
+    <Product>GammaFour.Data.Client</Product>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/DonaldAirey/GammaFour.Data.Client</RepositoryUrl>
+    <TargetFramework>net8.0</TargetFramework>
+    <Title>Gamma Four Data Model</Title>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Gamma Four.png"/>
+    <None Remove="Assets\README.md"/>
     <None Remove="stylecop.json" />
   </ItemGroup>
 
@@ -20,7 +33,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
+    <EmbeddedResource Include="Assets\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\Gamma Four.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

@@ -42,7 +42,7 @@ namespace GammaFour.Data.Client
         public override bool Filter(IRow row)
         {
             // This will typically be a test for null.
-            return this.filterFunction(row as TChild);
+            return row is TChild typedRow && this.filterFunction(typedRow);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace GammaFour.Data.Client
         public override object GetKey(IRow row)
         {
             // Extract the key from the row.
-            return this.keyFunction(row as TChild);
+            return row is TChild typedRow ? this.keyFunction(typedRow) : false;
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace GammaFour.Data.Client
         /// </summary>
         /// <param name="child">The child record.</param>
         /// <returns>The parent record of the given child.</returns>
-        public new TParent GetParent(IRow child)
+        public new TParent? GetParent(IRow child)
         {
             // Find the parent record.
             return base.GetParent(child) as TParent;
