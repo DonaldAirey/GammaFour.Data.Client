@@ -45,8 +45,11 @@ namespace GammaFour.Data.Client
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns>The record indexed by the given key, or null if it doesn't exist.</returns>
-        public new T? Find(object key)
+        public new T? Find(object? key)
         {
+            // Validate the arguments.
+            ArgumentNullException.ThrowIfNull(key);
+
             // Return the row from the dictionary, or null if it doesn't exist.
             return base.Find(key) as T;
         }

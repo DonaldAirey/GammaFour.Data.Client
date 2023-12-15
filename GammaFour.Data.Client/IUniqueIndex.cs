@@ -51,7 +51,7 @@ namespace GammaFour.Data.Client
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns>The record indexed by the given key, or null if it doesn't exist.</returns>
-        IRow? Find(object key);
+        IRow? Find(object? key);
 
         /// <summary>
         /// Gets the key of the given record.

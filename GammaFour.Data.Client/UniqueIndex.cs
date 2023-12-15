@@ -80,8 +80,11 @@ namespace GammaFour.Data.Client
         }
 
         /// <inheritdoc/>
-        public IRow? Find(object key)
+        public IRow? Find(object? key)
         {
+            // Validate the arguments.
+            ArgumentNullException.ThrowIfNull(key);
+
             // Return the row from the dictionary, or null if it doesn't exist.
             return this.dictionary.TryGetValue(key, out IRow? row) ? row : default;
         }
