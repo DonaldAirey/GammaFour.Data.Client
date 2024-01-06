@@ -1,12 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Authors>Donald Airey</Authors>
+    <Company>Public Domain</Company>
     <Configurations>Development;Production</Configurations>
-    <Copyright>Copyright (C) 2023 - Donald Airey - All rights reserved.</Copyright>
+    <Copyright>Copyright (C) 2024 - Donald Airey - All rights reserved.</Copyright>
     <Description>Support package for Gamma Four Data Model Generator output.</Description>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <InvariantGlobalization>true</InvariantGlobalization>
+    <NeutralLanguage>en-US</NeutralLanguage>
     <Nullable>enable</Nullable>
     <PackageIcon>Gamma Four.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -14,12 +16,19 @@
     <PackageProjectUrl>https://github.com/DonaldAirey/GammaFour.Data.Client</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageVersion>4.2.0</PackageVersion>
+    <PackageVersion>4.2.1</PackageVersion>
     <Product>GammaFour.Data.Client</Product>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/DonaldAirey/GammaFour.Data.Client</RepositoryUrl>
     <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <Title>Gamma Four Data Model</Title>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|AnyCPU'">
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Optimize>true</Optimize>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
