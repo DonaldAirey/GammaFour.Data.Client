@@ -16,7 +16,7 @@
     <PackageProjectUrl>https://github.com/DonaldAirey/GammaFour.Data.Client</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageVersion>4.2.1</PackageVersion>
+    <PackageVersion>4.2.4</PackageVersion>
     <Product>GammaFour.Data.Client</Product>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/DonaldAirey/GammaFour.Data.Client</RepositoryUrl>
