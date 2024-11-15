@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyVersion>4.2.7</AssemblyVersion>
+    <AssemblyVersion>9.0.0</AssemblyVersion>
     <Authors>Donald Airey</Authors>
     <Company>Public Domain</Company>
     <Configurations>Development;Production</Configurations>
@@ -17,12 +17,12 @@
     <PackageProjectUrl>https://github.com/DonaldAirey/GammaFour.Data.Client</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageVersion>4.2.7</PackageVersion>
+    <PackageVersion>9.0.0</PackageVersion>
     <Product>GammaFour.Data.Client</Product>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/DonaldAirey/GammaFour.Data.Client</RepositoryUrl>
-    <TargetFramework>net8.0</TargetFramework>
-    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFramework>net9.0</TargetFramework>
+    <TargetFrameworks>net9.0</TargetFrameworks>
     <Title>Gamma Four Data Model</Title>
   </PropertyGroup>
 
