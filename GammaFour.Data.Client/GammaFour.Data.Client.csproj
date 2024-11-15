@@ -24,6 +24,8 @@
     <TargetFramework>net9.0</TargetFramework>
     <TargetFrameworks>net9.0</TargetFrameworks>
     <Title>Gamma Four Data Model</Title>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>True</EnableNETAnalyzers>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|AnyCPU'">
@@ -33,8 +35,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\Gamma Four.png"/>
-    <None Remove="Assets\README.md"/>
+    <None Remove="Assets\Gamma Four.png" />
+    <None Remove="Assets\README.md" />
     <None Remove="stylecop.json" />
   </ItemGroup>
 
